@@ -1,16 +1,65 @@
-import React, { FC, memo } from 'react'
+import React, { FC, memo, useState } from 'react'
 import {
-  SimpleGrid,
   Box,
-  Button,
   Icon,
-  useTheme,
   Theme,
+  useTheme,
+  SimpleGrid,
+  IconButton,
 } from '@chakra-ui/react'
-import { HiOutlineVideoCamera, HiOutlineStop } from 'react-icons/hi'
+import {
+  FaVideoSlash,
+  FaDownload,
+  FaChalkboard,
+  FaCamera,
+} from 'react-icons/fa'
+import 'video-react/dist/video-react.css'
+// @ts-ignore
+import { Player } from 'video-react'
+// @ts-ignore
+import RecordRTC, {
+  // @ts-ignore
+  RecordRTCPromisesHandler,
+} from 'recordrtc'
+import { saveAs } from 'file-saver'
 
 const MainRecorder: FC = () => {
   const theme: Theme = useTheme()
+  const [recorder, setRecorder] = useState<RecordRTC | null>()
+  const [stream, setStream] = useState<MediaStream | null>()
+  const [videoBlob, setVideoUrlBlob] = useState<Blob | null>()
+
+  const startRecording = async () => {
+    const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+    const recorder: RecordRTC = new RecordRTCPromisesHandler(stream, {
+      type: 'video/mp4',
+    })
+
+    await recorder.startRecording()
+    setRecorder(recorder)
+    setStream(stream)
+    setVideoUrlBlob(null)
+  }
+
+  const stopRecording = async () => {
+    if (recorder) {
+      await recorder.stopRecording()
+      const blob: Blob = await recorder.getBlob()
+      ;(stream as any).stop()
+      setVideoUrlBlob(blob)
+      setStream(null)
+      setRecorder(null)
+    }
+  }
+
+  const downloadVideo = () => {
+    if (videoBlob) {
+      saveAs(videoBlob, `Video-${Date.now()}`)
+    }
+  }
 
   return (
     <SimpleGrid spacing="5" p="5">
@@ -24,24 +73,44 @@ const MainRecorder: FC = () => {
           'row', // 62em+
         ]}
       >
-        <Button
+        <IconButton
+          m="1"
+          bg={theme.colors.blue[600]}
+          size="lg"
+          aria-label="start recording"
+          color="white"
+          onClick={startRecording}
+          icon={<Icon as={FaChalkboard} />}
+        />
+        <IconButton
+          m="1"
+          bg={theme.colors.blue[600]}
+          size="lg"
+          aria-label="start recording"
+          color="white"
+          onClick={startRecording}
+          icon={<Icon as={FaCamera} />}
+        />
+        <IconButton
           m="1"
           bg={theme.colors.blue[600]}
           size="lg"
           color="white"
-          leftIcon={<Icon as={HiOutlineVideoCamera} />}
-        >
-          Start Recording
-        </Button>
-        <Button
+          aria-label="stop recording"
+          onClick={stopRecording}
+          disabled={recorder ? false : true}
+          icon={<Icon as={FaVideoSlash} />}
+        />
+        <IconButton
+          bg={theme.colors.blue[600]}
           m="1"
-          bg={theme.colors.blue[200]}
           size="lg"
-          color="black"
-          leftIcon={<Icon as={HiOutlineStop} />}
-        >
-          Stop Recording
-        </Button>
+          disabled={!!!videoBlob}
+          color="white"
+          onClick={downloadVideo}
+          aria-label="download video"
+          icon={<Icon as={FaDownload} />}
+        />
       </Box>
       <Box display="flex" justifyContent="center">
         <Box
@@ -53,7 +122,11 @@ const MainRecorder: FC = () => {
             '50vw', // 48em-62em
             '50vw', // 62em+
           ]}
-        />
+        >
+          {!!videoBlob && (
+            <Player src={window.URL.createObjectURL(videoBlob)} />
+          )}
+        </Box>
       </Box>
     </SimpleGrid>
   )
