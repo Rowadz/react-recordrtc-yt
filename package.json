@@ -1,6 +1,7 @@
 {
   "name": "react-recordrtc-yt",
   "version": "0.1.0",
+  "homepage": "https://mohammedal-rowad.github.io/react-recordrtc-yt/",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^1.0.12",
