@@ -40,7 +40,6 @@ const MainRecorder: FC = () => {
           })
     const recorder: RecordRTC = new RecordRTCPromisesHandler(stream, {
       type: 'video',
-      mimeType: 'video/webm',
     })
 
     await recorder.startRecording()
