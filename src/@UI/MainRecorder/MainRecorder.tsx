@@ -3,16 +3,12 @@ import {
   Box,
   Icon,
   Theme,
+  Button,
   useTheme,
   SimpleGrid,
   IconButton,
 } from '@chakra-ui/react'
-import {
-  FaVideoSlash,
-  FaDownload,
-  FaChalkboard,
-  FaCamera,
-} from 'react-icons/fa'
+import { FaVideoSlash, FaDownload, FaCamera } from 'react-icons/fa'
 import 'video-react/dist/video-react.css'
 // @ts-ignore
 import { Player } from 'video-react'
@@ -28,12 +24,20 @@ const MainRecorder: FC = () => {
   const [recorder, setRecorder] = useState<RecordRTC | null>()
   const [stream, setStream] = useState<MediaStream | null>()
   const [videoBlob, setVideoUrlBlob] = useState<Blob | null>()
+  const [type, setType] = useState<'video' | 'screen'>('video')
 
   const startRecording = async () => {
-    const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    })
+    const mediaDevices = navigator.mediaDevices
+    const stream: MediaStream =
+      type === 'video'
+        ? await mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          })
+        : await (mediaDevices as any).getDisplayMedia({
+            video: true,
+            audio: false,
+          })
     const recorder: RecordRTC = new RecordRTCPromisesHandler(stream, {
       type: 'video/mp4',
     })
@@ -61,6 +65,14 @@ const MainRecorder: FC = () => {
     }
   }
 
+  const changeType = () => {
+    if (type === 'screen') {
+      setType('video')
+    } else {
+      setType('screen')
+    }
+  }
+
   return (
     <SimpleGrid spacing="5" p="5">
       <Box
@@ -73,15 +85,16 @@ const MainRecorder: FC = () => {
           'row', // 62em+
         ]}
       >
-        <IconButton
+        <Button
           m="1"
           bg={theme.colors.blue[600]}
           size="lg"
           aria-label="start recording"
           color="white"
-          onClick={startRecording}
-          icon={<Icon as={FaChalkboard} />}
-        />
+          onClick={changeType}
+        >
+          {type === 'screen' ? 'Record Screen' : 'Record Video'}
+        </Button>
         <IconButton
           m="1"
           bg={theme.colors.blue[600]}
@@ -114,7 +127,7 @@ const MainRecorder: FC = () => {
       </Box>
       <Box display="flex" justifyContent="center">
         <Box
-          bg="blue.50"
+          bg={!!videoBlob ? 'inherit' : 'blue.50'}
           h="50vh"
           width={[
             '100%', // 0-30em
