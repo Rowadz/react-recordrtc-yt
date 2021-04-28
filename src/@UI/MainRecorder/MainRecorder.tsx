@@ -39,7 +39,8 @@ const MainRecorder: FC = () => {
             audio: false,
           })
     const recorder: RecordRTC = new RecordRTCPromisesHandler(stream, {
-      type: 'video/mp4',
+      type: 'video',
+      mimeType: 'video/webm',
     })
 
     await recorder.startRecording()
@@ -61,7 +62,7 @@ const MainRecorder: FC = () => {
 
   const downloadVideo = () => {
     if (videoBlob) {
-      saveAs(videoBlob, `Video-${Date.now()}`)
+      saveAs(videoBlob, `Video-${Date.now()}.webm`)
     }
   }
 
