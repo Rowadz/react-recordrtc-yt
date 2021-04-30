@@ -3,7 +3,6 @@
 see demo here
 https://mohammedal-rowad.github.io/react-recordrtc-yt/
 
-
 the code in the `code` branch
 
 ### How to install it locally
@@ -16,4 +15,4 @@ $ npm i
 $ npm run start
 ```
 
-<img src="thumb.png" width="100%">
+<img src="thumb02.png" width="100%">
