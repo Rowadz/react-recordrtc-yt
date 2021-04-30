@@ -13,4 +13,4 @@ $ npm i
 $ npm run start
 ```
 
-<img src="thumb.png" width="100%">
+<img src="thumb02.png" width="100%">
