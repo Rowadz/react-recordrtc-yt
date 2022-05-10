@@ -61,7 +61,9 @@ const MainRecorder: FC = () => {
 
   const downloadVideo = () => {
     if (videoBlob) {
-      saveAs(videoBlob, `Video-${Date.now()}.webm`)
+      const mp4File = new File([videoBlob], 'demo.mp4', { type: 'video/mp4' })
+      saveAs(mp4File, `Video-${Date.now()}.mp4`)
+      // saveAs(videoBlob, `Video-${Date.now()}.webm`)
     }
   }
 
