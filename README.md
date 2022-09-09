@@ -1,7 +1,7 @@
 # react-recordrtc-yt
 
 see demo here
-https://mohammedal-rowad.github.io/react-recordrtc-yt/
+https://rowadz.github.io/react-recordrtc-yt/
 
 the code in the `code` branch
 
